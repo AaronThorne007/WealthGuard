@@ -1,7 +1,14 @@
 "use client"
 
-import { ArrowDown, ArrowUp } from "lucide-react"
+import { ArrowDown, ArrowUp, MoreVertical, Pencil, Trash2 } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -16,6 +23,9 @@ import { formatCurrency, formatDateShort } from "./transaction-types"
 
 type TransactionsTableProps = {
   rows: TransactionRow[]
+  filterActive: boolean
+  onEdit: (row: TransactionRow) => void
+  onDelete: (row: TransactionRow) => void
 }
 
 function AmountCell({ type, amount }: { type: TransactionRow["type"]; amount: number }) {
@@ -33,11 +43,18 @@ function AmountCell({ type, amount }: { type: TransactionRow["type"]; amount: nu
   )
 }
 
-export function TransactionsTable({ rows }: TransactionsTableProps) {
+export function TransactionsTable({
+  rows,
+  filterActive,
+  onEdit,
+  onDelete,
+}: TransactionsTableProps) {
   if (rows.length === 0) {
     return (
       <div className="rounded-lg border bg-white p-8 text-center text-sm text-muted-foreground">
-        No transactions match your filters.
+        {filterActive
+          ? "No transactions match your filters."
+          : "No transactions yet. Add one with the button above."}
       </div>
     )
   }
@@ -52,6 +69,9 @@ export function TransactionsTable({ rows }: TransactionsTableProps) {
             <TableHead className="hidden md:table-cell">Category</TableHead>
             <TableHead className="hidden lg:table-cell">Account</TableHead>
             <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="w-[52px] pr-2 text-right">
+              <span className="sr-only">Actions</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -69,6 +89,34 @@ export function TransactionsTable({ rows }: TransactionsTableProps) {
               </TableCell>
               <TableCell className="text-right">
                 <AmountCell type={tx.type} amount={tx.amount} />
+              </TableCell>
+              <TableCell className="pr-2 text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-muted-foreground hover:text-foreground"
+                      aria-label={`Actions for ${tx.description}`}
+                    >
+                      <MoreVertical className="size-4" aria-hidden="true" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuItem onSelect={() => onEdit(tx)}>
+                      <Pencil className="size-4" aria-hidden="true" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={() => onDelete(tx)}
+                    >
+                      <Trash2 className="size-4" aria-hidden="true" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}

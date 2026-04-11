@@ -1,16 +1,7 @@
-import type { TransactionCategory, TransactionRow } from "@/components/transactions/transaction-types"
+import type { TransactionRow } from "@/components/transactions/transaction-types"
+import { TRANSACTION_CATEGORIES } from "@/components/transactions/transaction-types"
 
-export const transactionCategories: TransactionCategory[] = [
-  "Income",
-  "Rent",
-  "Groceries",
-  "Dining",
-  "Transport",
-  "Bills",
-  "Shopping",
-  "Entertainment",
-  "Other",
-]
+export const transactionCategories = TRANSACTION_CATEGORIES
 
 export const mockTransactions: TransactionRow[] = [
   {
