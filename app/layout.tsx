@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { AppShell } from "@/components/app/app-shell";
 
@@ -29,6 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AppShell>{children}</AppShell>
+        <Toaster richColors closeButton position="top-center" />
       </body>
     </html>
   );
