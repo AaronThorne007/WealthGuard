@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatCurrency } from "@/lib/mock/dashboard"
+import { formatCurrency } from "@/lib/dashboard/format"
 
 type InsightsCardProps = {
   monthlyIncome: number
@@ -65,10 +65,6 @@ export function InsightsCard({
                 ({formatCurrency(highestDay.spend)})
               </span>
             ) : null}
-          </li>
-          <li>
-            Prototype note: these insights are calculated from hardcoded mock
-            transactions only.
           </li>
         </ul>
       </CardContent>

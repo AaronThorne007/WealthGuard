@@ -1,10 +1,17 @@
 "use client"
 
-import { Flag } from "lucide-react"
+import { Flag, MoreVertical, Pencil, Trash2 } from "lucide-react"
 
+import type { Goal } from "@/components/goals/goal-types"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { Goal } from "@/lib/mock/goals"
-import { formatCurrency, percent } from "@/lib/mock/goals"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { formatCurrency, percent } from "@/lib/goals/format"
 import { cn } from "@/lib/utils"
 
 import { ProgressUpdate } from "./progress-update"
@@ -12,6 +19,8 @@ import { ProgressUpdate } from "./progress-update"
 type GoalCardProps = {
   goal: Goal
   onUpdateSaved: (goalId: string, delta: number) => void
+  onEdit: (goal: Goal) => void
+  onDelete: (goal: Goal) => void
 }
 
 function ProgressBar({ value }: { value: number }) {
@@ -25,19 +34,47 @@ function ProgressBar({ value }: { value: number }) {
   )
 }
 
-export function GoalCard({ goal, onUpdateSaved }: GoalCardProps) {
+export function GoalCard({ goal, onUpdateSaved, onEdit, onDelete }: GoalCardProps) {
   const p = percent(goal.saved, goal.target)
   const remaining = Math.max(0, goal.target - goal.saved)
 
   return (
     <Card className="shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2">
-          <span className="grid size-8 place-items-center rounded-lg bg-indigo-50 text-indigo-700">
-            <Flag className="size-4" aria-hidden="true" />
-          </span>
-          <span className="min-w-0 truncate">{goal.title}</span>
-        </CardTitle>
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="flex min-w-0 flex-1 items-center gap-2">
+            <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-indigo-50 text-indigo-700">
+              <Flag className="size-4" aria-hidden="true" />
+            </span>
+            <span className="min-w-0 truncate">{goal.title}</span>
+          </CardTitle>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                className="shrink-0 text-muted-foreground hover:text-foreground"
+                aria-label="Goal actions"
+              >
+                <MoreVertical className="size-4" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onEdit(goal)}>
+                <Pencil className="mr-2 size-4" aria-hidden="true" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => onDelete(goal)}
+              >
+                <Trash2 className="mr-2 size-4" aria-hidden="true" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
@@ -82,4 +119,3 @@ export function GoalCard({ goal, onUpdateSaved }: GoalCardProps) {
     </Card>
   )
 }
-

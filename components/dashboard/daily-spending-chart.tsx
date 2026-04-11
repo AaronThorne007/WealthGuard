@@ -12,8 +12,8 @@ import {
 } from "recharts"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { DailySpendPoint } from "@/lib/mock/dashboard"
-import { formatCurrency } from "@/lib/mock/dashboard"
+import type { DailySpendPoint } from "@/lib/dashboard/aggregate"
+import { formatCurrency } from "@/lib/dashboard/format"
 
 function shortDate(iso: string) {
   // "2026-03-04" -> "Mar 4"
