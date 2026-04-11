@@ -11,6 +11,26 @@ export type TransactionCategory =
 
 export type TransactionType = "income" | "expense"
 
+export type TransactionAccount = "Checking" | "Savings" | "Cash"
+
+export const TRANSACTION_CATEGORIES: TransactionCategory[] = [
+  "Income",
+  "Rent",
+  "Groceries",
+  "Dining",
+  "Transport",
+  "Bills",
+  "Shopping",
+  "Entertainment",
+  "Other",
+]
+
+export const TRANSACTION_ACCOUNTS: TransactionAccount[] = [
+  "Checking",
+  "Savings",
+  "Cash",
+]
+
 export type TransactionRow = {
   id: string
   date: string // yyyy-mm-dd
@@ -18,7 +38,7 @@ export type TransactionRow = {
   category: TransactionCategory
   type: TransactionType
   amount: number // always positive; use `type` for direction
-  account: "Checking" | "Savings" | "Cash"
+  account: TransactionAccount
 }
 
 export function formatCurrency(value: number) {

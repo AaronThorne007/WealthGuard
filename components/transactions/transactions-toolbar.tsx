@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { transactionCategories } from "@/lib/mock/transactions"
+import { TRANSACTION_CATEGORIES } from "@/components/transactions/transaction-types"
 
 type TransactionsToolbarProps = {
   title?: string
@@ -19,6 +19,7 @@ type TransactionsToolbarProps = {
   onSearchChange: (value: string) => void
   category: string
   onCategoryChange: (value: string) => void
+  onAddTransaction: () => void
 }
 
 export function TransactionsToolbar({
@@ -27,6 +28,7 @@ export function TransactionsToolbar({
   onSearchChange,
   category,
   onCategoryChange,
+  onAddTransaction,
 }: TransactionsToolbarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -35,7 +37,7 @@ export function TransactionsToolbar({
           {title}
         </div>
         <div className="text-sm text-muted-foreground">
-          Static UI with mock data (ready to wire to real data later)
+          Stored in your Supabase project (per signed-in user).
         </div>
       </div>
 
@@ -60,7 +62,7 @@ export function TransactionsToolbar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All categories</SelectItem>
-            {transactionCategories.map((c) => (
+            {TRANSACTION_CATEGORIES.map((c) => (
               <SelectItem key={c} value={c}>
                 {c}
               </SelectItem>
@@ -68,7 +70,11 @@ export function TransactionsToolbar({
           </SelectContent>
         </Select>
 
-        <Button className="bg-indigo-600 text-white hover:bg-indigo-600/90">
+        <Button
+          type="button"
+          className="bg-indigo-600 text-white hover:bg-indigo-600/90"
+          onClick={onAddTransaction}
+        >
           <Plus className="size-4" aria-hidden="true" />
           <span className="ml-2">Add Transaction</span>
         </Button>
