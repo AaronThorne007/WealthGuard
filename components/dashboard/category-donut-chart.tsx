@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import type { CategorySpendPoint } from "@/lib/mock/dashboard"
-import { formatCurrency } from "@/lib/mock/dashboard"
+import type { CategorySpendPoint } from "@/lib/dashboard/aggregate"
+import { formatCurrency } from "@/lib/dashboard/format"
 
 export function CategoryDonutChart({
   data,
