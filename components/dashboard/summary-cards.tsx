@@ -70,7 +70,7 @@ export function SummaryCards({
             <Wallet className="size-4" aria-hidden="true" />
           </span>
           <span>
-            Totals and charts use your transactions from Supabase. Monthly
+            Totals and charts use transactions from Supabase. Monthly
             figures use the UTC calendar month shown above.
           </span>
         </CardContent>
