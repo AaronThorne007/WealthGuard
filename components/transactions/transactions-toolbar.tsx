@@ -37,7 +37,7 @@ export function TransactionsToolbar({
           {title}
         </div>
         <div className="text-sm text-muted-foreground">
-          Stored in your Supabase project (per signed-in user).
+          Your personal transaction history.
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import {
   aggregateDashboard,
   utcCalendarMonthRange,
 } from "@/lib/dashboard/aggregate"
+import { formatCalendarMonthLabel } from "@/lib/dashboard/format"
 import { createClient } from "@/lib/supabase/server"
 import { transactionFromDb, type TransactionDbRow } from "@/lib/transactions/db-row"
 
@@ -67,7 +68,7 @@ export default async function DashboardPage() {
         balance={dashboard.balance}
         monthlyIncome={dashboard.monthlyIncome}
         monthlyExpenses={dashboard.monthlyExpenses}
-        monthLabel={`${monthRange.start.slice(0, 7)} (UTC)`}
+        monthLabel={formatCalendarMonthLabel(monthRange.start)}
       />
 
       <section className="grid gap-4 lg:grid-cols-2">

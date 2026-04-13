@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatCurrency } from "@/lib/dashboard/format"
+import { formatCurrency, formatDateLong } from "@/lib/dashboard/format"
 
 type InsightsCardProps = {
   monthlyIncome: number
@@ -58,7 +58,7 @@ export function InsightsCard({
           <li>
             Highest spend day:{" "}
             <span className="font-medium text-foreground">
-              {highestDay ? highestDay.date : "—"}
+              {highestDay ? formatDateLong(highestDay.date) : "—"}
             </span>{" "}
             {highestDay ? (
               <span className="tabular-nums">

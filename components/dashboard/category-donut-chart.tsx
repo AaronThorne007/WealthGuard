@@ -92,7 +92,7 @@ export function CategoryDonutChart({
           ) : null}
 
           <div className="space-y-2">
-            {data.slice(0, 4).map((d) => (
+            {data.slice(1, 5).map((d) => (
               <div key={d.category} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <span
