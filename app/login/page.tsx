@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -36,8 +37,17 @@ export default async function LoginPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md pt-6">
-      <Card>
+    <div className="mx-auto w-full max-w-md pt-8">
+      <div className="mb-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Back to home
+        </Link>
+      </div>
+      <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Log in</CardTitle>
           <CardDescription>Sign in with your email and password.</CardDescription>

@@ -1,19 +1,26 @@
 import Link from "next/link"
+import { AlertTriangle, Check, ReceiptText } from "lucide-react"
 
 import { CategoryDonutChart } from "@/components/dashboard/category-donut-chart"
 import { DailySpendingChart } from "@/components/dashboard/daily-spending-chart"
 import { InsightsCard } from "@/components/dashboard/insights-card"
 import { SummaryCards } from "@/components/dashboard/summary-cards"
 import { Button } from "@/components/ui/button"
-import {
-  aggregateDashboard,
-  utcCalendarMonthRange,
-} from "@/lib/dashboard/aggregate"
-import { formatCalendarMonthLabel } from "@/lib/dashboard/format"
+import { StateCard } from "@/components/ui/state-card"
+import { aggregateDashboard } from "@/lib/dashboard/aggregate"
 import { createClient } from "@/lib/supabase/server"
 import { transactionFromDb, type TransactionDbRow } from "@/lib/transactions/db-row"
 
-export default async function DashboardPage() {
+type Props = {
+  searchParams?: Promise<{ year?: string }>
+}
+
+function isValidYear(value: string) {
+  return /^\d{4}$/.test(value)
+}
+
+export default async function DashboardPage({ searchParams }: Props) {
+  const sp = (await searchParams) ?? {}
   const supabase = await createClient()
   const {
     data: { user },
@@ -33,50 +40,131 @@ export default async function DashboardPage() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-6 text-sm">
-        <p className="font-medium text-destructive">Could not load dashboard</p>
-        <p className="mt-1 text-muted-foreground">{error.message}</p>
-      </div>
+      <StateCard
+        title="Could not load dashboard"
+        description={error.message}
+        tone="destructive"
+        icon={<AlertTriangle className="size-5" aria-hidden="true" />}
+      />
     )
   }
 
   const rows = ((data ?? []) as TransactionDbRow[]).map(transactionFromDb)
-  const monthRange = utcCalendarMonthRange()
-  const dashboard = aggregateDashboard(rows, monthRange)
+  const yearOptions = Array.from(new Set(rows.map((r) => r.date.slice(0, 4))))
+  const currentYear = String(new Date().getUTCFullYear())
+  const requestedYear =
+    typeof sp.year === "string" && isValidYear(sp.year) ? sp.year : null
+  const activeYear =
+    requestedYear && yearOptions.includes(requestedYear)
+      ? requestedYear
+      : yearOptions[0] ?? currentYear
+  const yearRange = { start: `${activeYear}-01-01`, end: `${activeYear}-12-31` }
+  const dashboard = aggregateDashboard(rows, yearRange)
+  const rowsInActiveYear = rows.filter(
+    (r) => r.date >= yearRange.start && r.date <= yearRange.end
+  )
 
   if (rows.length === 0) {
     return (
       <div className="space-y-6">
-        <div className="rounded-lg border bg-white p-8 text-center">
-          <p className="text-sm font-medium text-foreground">
-            No transactions yet
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Add transactions to see your balance, spending charts, and insights.
-          </p>
-          <Button asChild className="mt-4">
-            <Link href="/transactions">Go to transactions</Link>
+        <section className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-lg font-semibold tracking-tight text-foreground">
+              Dashboard
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Yearly snapshot for {activeYear}
+            </p>
+          </div>
+          <Button asChild className="bg-indigo-600 text-white hover:bg-indigo-600/90">
+            <Link href="/transactions">Add transaction</Link>
           </Button>
-        </div>
+        </section>
+
+        <StateCard
+          title="No transactions yet"
+          description="Add transactions to see your balance, spending charts, and insights."
+          icon={<ReceiptText className="size-5" aria-hidden="true" />}
+          action={
+            <Button asChild>
+              <Link href="/transactions">Go to transactions</Link>
+            </Button>
+          }
+        />
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
+      <section className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight text-foreground">
+            Dashboard
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Yearly snapshot for {activeYear}
+          </p>
+          {yearOptions.length > 1 ? (
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              {yearOptions.map((year) => {
+                const active = year === activeYear
+                return (
+                  <Button
+                    key={year}
+                    asChild
+                    size="sm"
+                    variant={active ? "default" : "outline"}
+                    className={
+                      active
+                        ? "shrink-0 bg-indigo-600 text-white hover:bg-indigo-600/90"
+                        : "shrink-0"
+                    }
+                  >
+                    <Link href={`/dashboard?year=${year}`}>
+                      {active ? <Check className="size-3.5" aria-hidden="true" /> : null}
+                      {year}
+                    </Link>
+                  </Button>
+                )
+              })}
+            </div>
+          ) : null}
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/transactions">Add transaction</Link>
+        </Button>
+      </section>
+
       <SummaryCards
         balance={dashboard.balance}
         monthlyIncome={dashboard.monthlyIncome}
         monthlyExpenses={dashboard.monthlyExpenses}
-        monthLabel={formatCalendarMonthLabel(monthRange.start)}
+        periodLabel={activeYear}
       />
+
+      {rowsInActiveYear.length === 0 ? (
+        <StateCard
+          title={`No data for ${activeYear}`}
+          description="Pick another year above or add transactions in this year to populate charts and insights."
+          icon={<ReceiptText className="size-5" aria-hidden="true" />}
+          action={
+            <Button asChild>
+              <Link href="/transactions">Add transaction</Link>
+            </Button>
+          }
+        />
+      ) : null}
 
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="min-w-0">
-          <DailySpendingChart data={dashboard.dailySpending} />
+          <DailySpendingChart data={dashboard.dailySpending} periodLabel={activeYear} />
         </div>
         <div className="min-w-0">
-          <CategoryDonutChart data={dashboard.spendingByCategory} />
+          <CategoryDonutChart
+            data={dashboard.spendingByCategory}
+            periodLabel={activeYear}
+          />
         </div>
       </section>
 

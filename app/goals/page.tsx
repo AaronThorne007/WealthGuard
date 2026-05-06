@@ -12,13 +12,13 @@ import {
 import { GoalsGrid } from "@/components/goals/goals-grid"
 import type { Goal } from "@/components/goals/goal-types"
 import { Button } from "@/components/ui/button"
+import { StateCard } from "@/components/ui/state-card"
 import { createClient } from "@/lib/supabase/client"
 import { goalFromDb, type GoalDbRow } from "@/lib/goals/db-row"
 import { clamp } from "@/lib/goals/format"
 
 export default function GoalsPage() {
-  const [goals, setGoals] = useState<Goal[]>([])
-  const [loading, setLoading] = useState(true)
+  const [goals, setGoals] = useState<Goal[] | null>(null)
   const [formOpen, setFormOpen] = useState(false)
   const [formMode, setFormMode] = useState<"create" | "edit">("create")
   const [editing, setEditing] = useState<Goal | null>(null)
@@ -52,14 +52,9 @@ export default function GoalsPage() {
   }, [])
 
   useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    loadGoals().finally(() => {
-      if (!cancelled) setLoading(false)
-    })
-    return () => {
-      cancelled = true
-    }
+    // Initial client-side fetch; this component intentionally hydrates data into local state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadGoals()
   }, [loadGoals])
 
   const openCreate = () => {
@@ -132,7 +127,7 @@ export default function GoalsPage() {
   }
 
   const handleUpdateSaved = async (goalId: string, delta: number) => {
-    const goal = goals.find((g) => g.id === goalId)
+    const goal = goals?.find((g) => g.id === goalId)
     if (!goal) return
 
     const nextSaved = clamp(goal.saved + delta, 0, goal.target)
@@ -154,15 +149,15 @@ export default function GoalsPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="text-lg font-semibold tracking-tight text-foreground">
+          <h1 className="text-lg font-semibold tracking-tight text-foreground">
             Goals
-          </div>
-          <div className="text-sm text-muted-foreground">
+          </h1>
+          <p className="text-sm text-muted-foreground">
             Track savings targets and update progress
-          </div>
+          </p>
         </div>
 
         <Button
@@ -175,14 +170,13 @@ export default function GoalsPage() {
         </Button>
       </div>
 
-      {loading ? (
-        <div className="rounded-lg border bg-white p-8 text-center text-sm text-muted-foreground">
-          Loading goals…
-        </div>
+      {goals === null ? (
+        <StateCard tone="loading" title="Loading goals..." />
       ) : goals.length === 0 ? (
-        <div className="rounded-lg border bg-white p-8 text-center text-sm text-muted-foreground">
-          No goals yet. Create one with the button above.
-        </div>
+        <StateCard
+          title="No goals yet"
+          description="Create your first goal to start tracking savings progress."
+        />
       ) : (
         <GoalsGrid
           goals={goals}

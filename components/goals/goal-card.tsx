@@ -47,6 +47,11 @@ export function GoalCard({ goal, onUpdateSaved, onEdit, onDelete }: GoalCardProp
               <Flag className="size-4" aria-hidden="true" />
             </span>
             <span className="min-w-0 truncate">{goal.title}</span>
+            {p === 100 ? (
+              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                Completed
+              </span>
+            ) : null}
           </CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -95,7 +100,12 @@ export function GoalCard({ goal, onUpdateSaved, onEdit, onDelete }: GoalCardProp
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>Progress</span>
-            <span className={cn("tabular-nums", p === 100 && "text-emerald-700")}>
+            <span
+              className={cn(
+                "rounded-full bg-muted px-2 py-0.5 font-medium tabular-nums",
+                p === 100 && "bg-emerald-50 text-emerald-700"
+              )}
+            >
               {p}%
             </span>
           </div>

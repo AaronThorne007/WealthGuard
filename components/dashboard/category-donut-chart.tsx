@@ -4,17 +4,22 @@ import { useEffect, useState } from "react"
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StateCard } from "@/components/ui/state-card"
 import type { CategorySpendPoint } from "@/lib/dashboard/aggregate"
 import { formatCurrency } from "@/lib/dashboard/format"
 
 export function CategoryDonutChart({
   data,
+  periodLabel,
 }: {
   data: CategorySpendPoint[]
+  periodLabel: string
 }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // Client-only chart rendering gate for hydration safety.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
@@ -25,13 +30,20 @@ export function CategoryDonutChart({
     <Card className="shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle>Spending by category</CardTitle>
+        <p className="text-xs text-muted-foreground">
+          Breakdown of expense categories in {periodLabel}.
+        </p>
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-2 md:items-center">
         <div className="h-[240px]">
           {!mounted ? (
-            <div className="grid h-full place-items-center rounded-lg border bg-white text-sm text-muted-foreground">
-              Loading chart…
-            </div>
+            <StateCard tone="loading" title="Loading chart..." className="h-full" />
+          ) : data.length === 0 ? (
+            <StateCard
+              title="No category data yet"
+              description="Add expense transactions to view category breakdowns."
+              className="grid h-full place-items-center p-6"
+            />
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -40,6 +52,7 @@ export function CategoryDonutChart({
                     formatCurrency(Number(value)),
                     String(name),
                   ]}
+                  cursor={{ fill: "hsl(var(--muted) / 0.25)" }}
                   contentStyle={{
                     borderRadius: 12,
                     border: "1px solid hsl(var(--border))",
@@ -92,7 +105,7 @@ export function CategoryDonutChart({
           ) : null}
 
           <div className="space-y-2">
-            {data.slice(1, 5).map((d) => (
+            {data.slice(1, 6).map((d) => (
               <div key={d.category} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <span

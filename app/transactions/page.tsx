@@ -11,14 +11,14 @@ import {
 import { TransactionsTable } from "@/components/transactions/transactions-table"
 import { TransactionsToolbar } from "@/components/transactions/transactions-toolbar"
 import type { TransactionRow } from "@/components/transactions/transaction-types"
+import { StateCard } from "@/components/ui/state-card"
 import { transactionFromDb, type TransactionDbRow } from "@/lib/transactions/db-row"
 import { createClient } from "@/lib/supabase/client"
 
 export default function TransactionsPage() {
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState("all")
-  const [allRows, setAllRows] = useState<TransactionRow[]>([])
-  const [loading, setLoading] = useState(true)
+  const [allRows, setAllRows] = useState<TransactionRow[] | null>(null)
   const [formOpen, setFormOpen] = useState(false)
   const [formMode, setFormMode] = useState<"create" | "edit">("create")
   const [editing, setEditing] = useState<TransactionRow | null>(null)
@@ -26,11 +26,21 @@ export default function TransactionsPage() {
 
   const loadTransactions = useCallback(async () => {
     const supabase = createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      setAllRows([])
+      return
+    }
+
     const { data, error } = await supabase
       .from("transactions")
       .select(
         "id, user_id, date, description, category, type, amount, account"
       )
+      .eq("user_id", user.id)
       .order("date", { ascending: false })
 
     if (error) {
@@ -44,14 +54,9 @@ export default function TransactionsPage() {
   }, [])
 
   useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    loadTransactions().finally(() => {
-      if (!cancelled) setLoading(false)
-    })
-    return () => {
-      cancelled = true
-    }
+    // Initial client-side fetch; this component intentionally hydrates data into local state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadTransactions()
   }, [loadTransactions])
 
   const filterActive = category !== "all" || search.trim().length > 0
@@ -59,7 +64,7 @@ export default function TransactionsPage() {
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
 
-    return [...allRows]
+    return [...(allRows ?? [])]
       .sort((a, b) => b.date.localeCompare(a.date))
       .filter((t) => {
         if (category !== "all" && t.category !== category) return false
@@ -130,7 +135,7 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <TransactionsToolbar
         search={search}
         onSearchChange={setSearch}
@@ -139,10 +144,8 @@ export default function TransactionsPage() {
         onAddTransaction={openCreate}
       />
 
-      {loading ? (
-        <div className="rounded-lg border bg-white p-8 text-center text-sm text-muted-foreground">
-          Loading transactions…
-        </div>
+      {allRows === null ? (
+        <StateCard tone="loading" title="Loading transactions..." />
       ) : (
         <TransactionsTable
           rows={rows}

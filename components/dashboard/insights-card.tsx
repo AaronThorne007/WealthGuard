@@ -45,23 +45,25 @@ export function InsightsCard({
           </div>
         </div>
 
-        <ul className="space-y-2 text-muted-foreground">
+        <ul className="space-y-2 text-sm text-muted-foreground/90">
           <li>
             Biggest spending category:{" "}
-            <span className="font-medium text-foreground">
+            <span className="font-semibold text-foreground">
               {topCategory ? topCategory.category : "—"}
             </span>{" "}
             {topCategory ? (
-              <span className="tabular-nums">({topCategoryPct}%)</span>
+              <span className="font-medium tabular-nums text-foreground">
+                ({topCategoryPct}%)
+              </span>
             ) : null}
           </li>
           <li>
             Highest spend day:{" "}
-            <span className="font-medium text-foreground">
+            <span className="font-semibold text-foreground">
               {highestDay ? formatDateLong(highestDay.date) : "—"}
             </span>{" "}
             {highestDay ? (
-              <span className="tabular-nums">
+              <span className="font-medium tabular-nums text-foreground">
                 ({formatCurrency(highestDay.spend)})
               </span>
             ) : null}

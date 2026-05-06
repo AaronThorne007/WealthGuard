@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowDown, ArrowUp, MoreVertical, Pencil, Trash2 } from "lucide-react"
+import { ArrowDown, ArrowUp, MoreVertical, Pencil, SearchX, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { StateCard } from "@/components/ui/state-card"
 import { cn } from "@/lib/utils"
 import type { TransactionRow } from "./transaction-types"
 import { formatCurrency, formatDateShort } from "./transaction-types"
@@ -51,32 +52,50 @@ export function TransactionsTable({
 }: TransactionsTableProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-lg border bg-white p-8 text-center text-sm text-muted-foreground">
-        {filterActive
-          ? "No transactions match your filters."
-          : "No transactions yet. Add one with the button above."}
-      </div>
+      <StateCard
+        title={
+          filterActive
+            ? "No matching transactions"
+            : "No transactions yet"
+        }
+        description={
+          filterActive
+            ? "Try changing your search or category filter."
+            : "Add one with the button above."
+        }
+        icon={<SearchX className="size-5" aria-hidden="true" />}
+      />
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border bg-white">
+    <div className="overflow-hidden rounded-xl border bg-background shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/40">
-            <TableHead className="w-[140px]">Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead className="hidden md:table-cell">Category</TableHead>
-            <TableHead className="hidden lg:table-cell">Account</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
-            <TableHead className="w-[52px] pr-2 text-right">
+          <TableRow className="bg-muted/60">
+            <TableHead className="sticky top-0 z-10 w-[140px] bg-muted/95 backdrop-blur">
+              Date
+            </TableHead>
+            <TableHead className="sticky top-0 z-10 bg-muted/95 backdrop-blur">
+              Description
+            </TableHead>
+            <TableHead className="sticky top-0 z-10 hidden bg-muted/95 backdrop-blur md:table-cell">
+              Category
+            </TableHead>
+            <TableHead className="sticky top-0 z-10 hidden bg-muted/95 backdrop-blur lg:table-cell">
+              Account
+            </TableHead>
+            <TableHead className="sticky top-0 z-10 bg-muted/95 text-right backdrop-blur">
+              Amount
+            </TableHead>
+            <TableHead className="sticky top-0 z-10 w-[52px] bg-muted/95 pr-2 text-right backdrop-blur">
               <span className="sr-only">Actions</span>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((tx) => (
-            <TableRow key={tx.id} className="hover:bg-muted/30">
+            <TableRow key={tx.id} className="hover:bg-muted/40 focus-within:bg-muted/40">
               <TableCell className="font-medium">{formatDateShort(tx.date)}</TableCell>
               <TableCell className="max-w-[420px] truncate">
                 {tx.description}
@@ -96,7 +115,7 @@ export function TransactionsTable({
                     <Button
                       type="button"
                       variant="ghost"
-                      size="icon-sm"
+                      size="icon"
                       className="text-muted-foreground hover:text-foreground"
                       aria-label={`Actions for ${tx.description}`}
                     >

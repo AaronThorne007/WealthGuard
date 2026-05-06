@@ -12,6 +12,7 @@ import {
 } from "recharts"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StateCard } from "@/components/ui/state-card"
 import type { DailySpendPoint } from "@/lib/dashboard/aggregate"
 import { formatCurrency } from "@/lib/dashboard/format"
 
@@ -21,10 +22,23 @@ function shortDate(iso: string) {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
 }
 
-export function DailySpendingChart({ data }: { data: DailySpendPoint[] }) {
+function compactCurrency(value: number) {
+  if (value >= 1000) return `$${Math.round(value / 100) / 10}k`
+  return `$${Math.round(value)}`
+}
+
+export function DailySpendingChart({
+  data,
+  periodLabel,
+}: {
+  data: DailySpendPoint[]
+  periodLabel: string
+}) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    // Client-only chart rendering gate for hydration safety.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
@@ -32,12 +46,19 @@ export function DailySpendingChart({ data }: { data: DailySpendPoint[] }) {
     <Card className="shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle>Daily spending</CardTitle>
+        <p className="text-xs text-muted-foreground">
+          Expense totals for each day in {periodLabel}.
+        </p>
       </CardHeader>
       <CardContent className="h-[280px]">
         {!mounted ? (
-          <div className="grid h-full place-items-center rounded-lg border bg-white text-sm text-muted-foreground">
-            Loading chart…
-          </div>
+          <StateCard tone="loading" title="Loading chart..." className="h-full" />
+        ) : data.length === 0 ? (
+          <StateCard
+            title="No spending data yet"
+            description="Add expense transactions to populate the chart."
+            className="grid h-full place-items-center p-6"
+          />
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
@@ -60,7 +81,7 @@ export function DailySpendingChart({ data }: { data: DailySpendPoint[] }) {
                 className="fill-muted-foreground"
               />
               <YAxis
-                tickFormatter={(v) => `$${v}`}
+                tickFormatter={(v) => compactCurrency(Number(v))}
                 tickLine={false}
                 axisLine={false}
                 fontSize={12}
@@ -69,6 +90,7 @@ export function DailySpendingChart({ data }: { data: DailySpendPoint[] }) {
               <Tooltip
                 formatter={(value) => formatCurrency(Number(value))}
                 labelFormatter={(label) => shortDate(String(label))}
+                cursor={{ stroke: "#a5b4fc", strokeWidth: 1 }}
                 contentStyle={{
                   borderRadius: 12,
                   border: "1px solid hsl(var(--border))",

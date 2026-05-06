@@ -37,12 +37,12 @@ export function TransactionsToolbar({
           {title}
         </div>
         <div className="text-sm text-muted-foreground">
-          Your personal transaction history.
+          Track and edit your income and expenses.
         </div>
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div className="relative sm:w-[260px]">
+        <div className="relative w-full sm:w-[260px]">
           <Search
             className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
@@ -57,7 +57,10 @@ export function TransactionsToolbar({
         </div>
 
         <Select value={category} onValueChange={onCategoryChange}>
-          <SelectTrigger className="sm:w-[190px]" aria-label="Filter by category">
+          <SelectTrigger
+            className="w-full sm:w-[190px]"
+            aria-label="Filter by category"
+          >
             <SelectValue placeholder="All categories" />
           </SelectTrigger>
           <SelectContent>
@@ -72,7 +75,7 @@ export function TransactionsToolbar({
 
         <Button
           type="button"
-          className="bg-indigo-600 text-white hover:bg-indigo-600/90"
+          className="w-full bg-indigo-600 text-white hover:bg-indigo-600/90 sm:w-auto"
           onClick={onAddTransaction}
         >
           <Plus className="size-4" aria-hidden="true" />

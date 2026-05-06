@@ -57,10 +57,9 @@
          })}
        </nav>
  
-       <div className="px-4 py-3 text-xs text-muted-foreground">
-         <span className="font-medium text-foreground">Capstone</span> • Manual
-         tracking
-       </div>
+      <div className="px-4 py-3 text-xs text-muted-foreground">
+        Personal budget tracking
+      </div>
      </aside>
    )
  }
