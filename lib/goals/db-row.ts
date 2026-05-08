@@ -8,11 +8,16 @@ export type GoalDbRow = {
   target: string | number
 }
 
+function toFiniteNumber(value: string | number) {
+  const parsed = typeof value === "string" ? parseFloat(value) : value
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
 export function goalFromDb(row: GoalDbRow): Goal {
   return {
     id: row.id,
     title: row.title,
-    saved: typeof row.saved === "string" ? parseFloat(row.saved) : row.saved,
-    target: typeof row.target === "string" ? parseFloat(row.target) : row.target,
+    saved: toFiniteNumber(row.saved),
+    target: toFiniteNumber(row.target),
   }
 }

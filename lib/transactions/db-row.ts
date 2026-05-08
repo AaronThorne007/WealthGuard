@@ -15,6 +15,11 @@ export type TransactionDbRow = {
   account: string
 }
 
+function toFiniteNumber(value: string | number) {
+  const parsed = typeof value === "string" ? parseFloat(value) : value
+  return Number.isFinite(parsed) ? parsed : 0
+}
+
 export function transactionFromDb(row: TransactionDbRow): TransactionRow {
   return {
     id: row.id,
@@ -22,7 +27,7 @@ export function transactionFromDb(row: TransactionDbRow): TransactionRow {
     description: row.description,
     category: row.category as TransactionCategory,
     type: row.type as TransactionType,
-    amount: typeof row.amount === "string" ? parseFloat(row.amount) : row.amount,
+    amount: toFiniteNumber(row.amount),
     account: row.account as TransactionRow["account"],
   }
 }

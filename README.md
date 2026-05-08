@@ -39,6 +39,34 @@ Use the year buttons on the dashboard to switch between years.
 - Demo data replaces your current transactions and goals for your account.
 - Your data is shown per signed-in account.
 
+## Developer Notes
+
+### Local setup
+
+1. Install dependencies:
+   - `npm install`
+2. Add environment variables in `.env.local`:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. Start the app:
+   - `npm run dev`
+4. Open:
+   - [http://localhost:3000](http://localhost:3000)
+
+### Database
+
+- Supabase tables used by the app:
+  - `transactions`
+  - `goals`
+- `supabase/goals.sql` includes the goals table and RLS policies.
+- Demo data is loaded from the app API route and overwrites existing rows for the signed-in user.
+
+### Quality checks
+
+- Run lint:
+  - `npm run lint`
+
 ## Author
 
 Aaron
+CISC 4900 Senior project

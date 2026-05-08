@@ -86,7 +86,7 @@ export function CategoryDonutChart({
           </div>
 
           {top ? (
-            <div className="rounded-lg border bg-white p-3 text-sm">
+            <div className="rounded-lg border bg-background p-3 text-sm">
               <div className="text-muted-foreground">Top category</div>
               <div className="mt-1 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">

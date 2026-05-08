@@ -97,8 +97,11 @@ export function TransactionsTable({
           {rows.map((tx) => (
             <TableRow key={tx.id} className="hover:bg-muted/40 focus-within:bg-muted/40">
               <TableCell className="font-medium">{formatDateShort(tx.date)}</TableCell>
-              <TableCell className="max-w-[420px] truncate">
-                {tx.description}
+              <TableCell className="max-w-[420px]">
+                <div className="truncate">{tx.description}</div>
+                <div className="mt-0.5 text-xs text-muted-foreground md:hidden">
+                  {tx.category} · {tx.account} · {tx.type === "income" ? "Income" : "Expense"}
+                </div>
               </TableCell>
               <TableCell className="hidden md:table-cell text-muted-foreground">
                 {tx.category}

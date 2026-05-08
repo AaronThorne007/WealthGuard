@@ -37,7 +37,7 @@ export function TransactionsToolbar({
           {title}
         </div>
         <div className="text-sm text-muted-foreground">
-          Track and edit your income and expenses.
+          Track and edit your income and expenses. Search description, category, account, or type.
         </div>
       </div>
 
@@ -75,11 +75,12 @@ export function TransactionsToolbar({
 
         <Button
           type="button"
-          className="w-full bg-indigo-600 text-white hover:bg-indigo-600/90 sm:w-auto"
+          variant="brand"
+          className="w-full sm:w-auto"
           onClick={onAddTransaction}
         >
           <Plus className="size-4" aria-hidden="true" />
-          <span className="ml-2">Add Transaction</span>
+          <span className="ml-2">Add transaction</span>
         </Button>
       </div>
     </div>

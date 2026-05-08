@@ -41,7 +41,7 @@ export function ProgressUpdate({ onAdd }: ProgressUpdateProps) {
       <Button
         type="button"
         onClick={submit}
-        className="bg-indigo-600 text-white hover:bg-indigo-600/90"
+        variant="brand"
       >
         <Plus className="size-4" aria-hidden="true" />
         <span className="ml-2">Update</span>

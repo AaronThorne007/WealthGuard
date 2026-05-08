@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, CircleCheck } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,6 +16,13 @@ type Props = {
   }>
 }
 
+function sanitizeNextPath(value: string | undefined) {
+  if (!value) return "/dashboard"
+  if (!value.startsWith("/")) return "/dashboard"
+  if (value.startsWith("//")) return "/dashboard"
+  return value
+}
+
 export default async function LoginPage({ searchParams }: Props) {
   const sp = (await searchParams) ?? {}
 
@@ -24,7 +31,7 @@ export default async function LoginPage({ searchParams }: Props) {
 
     const email = String(formData.get("email") ?? "")
     const password = String(formData.get("password") ?? "")
-    const next = String(formData.get("next") ?? "/dashboard")
+    const next = sanitizeNextPath(String(formData.get("next") ?? "/dashboard"))
 
     const supabase = await createClient()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
@@ -60,13 +67,18 @@ export default async function LoginPage({ searchParams }: Props) {
           ) : null}
 
           {sp.message ? (
-            <div className="mb-4 rounded-lg border border-border bg-muted px-3 py-2 text-sm">
-              {sp.message}
+            <div className="mb-4 flex items-start gap-2 rounded-lg border border-emerald-200 bg-emerald-50/70 px-3 py-2 text-sm text-emerald-800">
+              <CircleCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              <span>{sp.message}</span>
             </div>
           ) : null}
 
           <form action={signIn} className="space-y-4">
-            <input type="hidden" name="next" value={sp.next ?? "/dashboard"} />
+            <input
+              type="hidden"
+              name="next"
+              value={sanitizeNextPath(typeof sp.next === "string" ? sp.next : undefined)}
+            />
 
             <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>

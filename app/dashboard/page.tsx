@@ -50,7 +50,9 @@ export default async function DashboardPage({ searchParams }: Props) {
   }
 
   const rows = ((data ?? []) as TransactionDbRow[]).map(transactionFromDb)
-  const yearOptions = Array.from(new Set(rows.map((r) => r.date.slice(0, 4))))
+  const yearOptions = Array.from(new Set(rows.map((r) => r.date.slice(0, 4)))).sort(
+    (a, b) => b.localeCompare(a)
+  )
   const currentYear = String(new Date().getUTCFullYear())
   const requestedYear =
     typeof sp.year === "string" && isValidYear(sp.year) ? sp.year : null
@@ -76,9 +78,6 @@ export default async function DashboardPage({ searchParams }: Props) {
               Yearly snapshot for {activeYear}
             </p>
           </div>
-          <Button asChild className="bg-indigo-600 text-white hover:bg-indigo-600/90">
-            <Link href="/transactions">Add transaction</Link>
-          </Button>
         </section>
 
         <StateCard
@@ -114,10 +113,10 @@ export default async function DashboardPage({ searchParams }: Props) {
                     key={year}
                     asChild
                     size="sm"
-                    variant={active ? "default" : "outline"}
+                    variant={active ? "brand" : "outline"}
                     className={
                       active
-                        ? "shrink-0 bg-indigo-600 text-white hover:bg-indigo-600/90"
+                        ? "shrink-0"
                         : "shrink-0"
                     }
                   >
@@ -138,8 +137,8 @@ export default async function DashboardPage({ searchParams }: Props) {
 
       <SummaryCards
         balance={dashboard.balance}
-        monthlyIncome={dashboard.monthlyIncome}
-        monthlyExpenses={dashboard.monthlyExpenses}
+        yearlyIncome={dashboard.monthlyIncome}
+        yearlyExpenses={dashboard.monthlyExpenses}
         periodLabel={activeYear}
       />
 
@@ -148,11 +147,6 @@ export default async function DashboardPage({ searchParams }: Props) {
           title={`No data for ${activeYear}`}
           description="Pick another year above or add transactions in this year to populate charts and insights."
           icon={<ReceiptText className="size-5" aria-hidden="true" />}
-          action={
-            <Button asChild>
-              <Link href="/transactions">Add transaction</Link>
-            </Button>
-          }
         />
       ) : null}
 
@@ -169,8 +163,8 @@ export default async function DashboardPage({ searchParams }: Props) {
       </section>
 
       <InsightsCard
-        monthlyIncome={dashboard.monthlyIncome}
-        monthlyExpenses={dashboard.monthlyExpenses}
+        yearlyIncome={dashboard.monthlyIncome}
+        yearlyExpenses={dashboard.monthlyExpenses}
         spendingByCategory={dashboard.spendingByCategory}
         dailySpending={dashboard.dailySpending}
       />

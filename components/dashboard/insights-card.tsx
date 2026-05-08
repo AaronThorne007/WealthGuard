@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency, formatDateLong } from "@/lib/dashboard/format"
 
 type InsightsCardProps = {
-  monthlyIncome: number
-  monthlyExpenses: number
+  yearlyIncome: number
+  yearlyExpenses: number
   spendingByCategory: Array<{ category: string; spend: number }>
   dailySpending: Array<{ date: string; spend: number }>
 }
@@ -14,16 +14,16 @@ function percent(part: number, total: number) {
 }
 
 export function InsightsCard({
-  monthlyIncome,
-  monthlyExpenses,
+  yearlyIncome,
+  yearlyExpenses,
   spendingByCategory,
   dailySpending,
 }: InsightsCardProps) {
-  const savings = monthlyIncome - monthlyExpenses
-  const savingsRate = monthlyIncome > 0 ? Math.round((savings / monthlyIncome) * 100) : 0
+  const savings = yearlyIncome - yearlyExpenses
+  const savingsRate = yearlyIncome > 0 ? Math.round((savings / yearlyIncome) * 100) : 0
 
   const topCategory = spendingByCategory[0]
-  const topCategoryPct = topCategory ? percent(topCategory.spend, monthlyExpenses) : 0
+  const topCategoryPct = topCategory ? percent(topCategory.spend, yearlyExpenses) : 0
 
   const highestDay = [...dailySpending].sort((a, b) => b.spend - a.spend)[0]
 
@@ -33,7 +33,7 @@ export function InsightsCard({
         <CardTitle>Insights</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
-        <div className="rounded-lg border bg-white p-3">
+        <div className="rounded-lg border bg-background p-3">
           <div className="text-muted-foreground">Estimated savings</div>
           <div className="mt-1 flex items-baseline justify-between gap-3">
             <div className="text-xl font-semibold tracking-tight">

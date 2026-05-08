@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils"
 
 type SummaryCardsProps = {
   balance: number
-  monthlyIncome: number
-  monthlyExpenses: number
+  yearlyIncome: number
+  yearlyExpenses: number
   periodLabel: string
 }
 
@@ -51,14 +51,14 @@ function StatCard({
 
 export function SummaryCards({
   balance,
-  monthlyIncome,
-  monthlyExpenses,
+  yearlyIncome,
+  yearlyExpenses,
   periodLabel,
 }: SummaryCardsProps) {
-  const monthlyNet = monthlyIncome - monthlyExpenses
-  const monthlyHealth = monthlyNet >= 0 ? "Surplus" : "Deficit"
+  const yearlyNet = yearlyIncome - yearlyExpenses
+  const yearlyHealth = yearlyNet >= 0 ? "Surplus" : "Deficit"
   const spendingRatio =
-    monthlyIncome > 0 ? Math.round((monthlyExpenses / monthlyIncome) * 100) : 0
+    yearlyIncome > 0 ? Math.round((yearlyExpenses / yearlyIncome) * 100) : 0
 
   return (
     <section className="grid gap-4 md:grid-cols-3">
@@ -71,13 +71,13 @@ export function SummaryCards({
       />
       <StatCard
         title="Yearly income"
-        value={formatCurrency(monthlyIncome)}
+        value={formatCurrency(yearlyIncome)}
         helper={`Income in ${periodLabel}`}
-        badge={monthlyHealth}
+        badge={yearlyHealth}
       />
       <StatCard
         title="Yearly expenses"
-        value={formatCurrency(monthlyExpenses)}
+        value={formatCurrency(yearlyExpenses)}
         helper={`Expenses in ${periodLabel}`}
         badge={`${spendingRatio}% of income`}
       />
@@ -92,9 +92,6 @@ export function SummaryCards({
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button asChild size="sm" className="bg-indigo-600 text-white hover:bg-indigo-600/90">
-              <Link href="/transactions">+ Add transaction</Link>
-            </Button>
             <Button asChild size="sm" variant="outline">
               <Link href="/goals">Create goal</Link>
             </Button>

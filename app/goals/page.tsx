@@ -102,6 +102,7 @@ export default function GoalsPage() {
           saved: nextSaved,
         })
         .eq("id", editing.id)
+        .eq("user_id", user.id)
 
       if (error) {
         toast.error(error.message)
@@ -116,7 +117,19 @@ export default function GoalsPage() {
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return
     const supabase = createClient()
-    const { error } = await supabase.from("goals").delete().eq("id", deleteTarget.id)
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) {
+      toast.error("You must be signed in")
+      throw new Error("Not signed in")
+    }
+
+    const { error } = await supabase
+      .from("goals")
+      .delete()
+      .eq("id", deleteTarget.id)
+      .eq("user_id", user.id)
 
     if (error) {
       toast.error(error.message)
@@ -134,10 +147,19 @@ export default function GoalsPage() {
     if (nextSaved === goal.saved) return
 
     const supabase = createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) {
+      toast.error("You must be signed in")
+      return
+    }
+
     const { error } = await supabase
       .from("goals")
       .update({ saved: nextSaved })
       .eq("id", goalId)
+      .eq("user_id", user.id)
 
     if (error) {
       toast.error(error.message)
@@ -163,10 +185,10 @@ export default function GoalsPage() {
         <Button
           type="button"
           onClick={openCreate}
-          className="bg-indigo-600 text-white hover:bg-indigo-600/90"
+          variant="brand"
         >
           <Plus className="size-4" aria-hidden="true" />
-          <span className="ml-2">Create New Goal</span>
+          <span className="ml-2">Create goal</span>
         </Button>
       </div>
 

@@ -69,7 +69,12 @@ export default function TransactionsPage() {
       .filter((t) => {
         if (category !== "all" && t.category !== category) return false
         if (!q) return true
-        return t.description.toLowerCase().includes(q)
+        return (
+          t.description.toLowerCase().includes(q) ||
+          t.category.toLowerCase().includes(q) ||
+          t.account.toLowerCase().includes(q) ||
+          t.type.toLowerCase().includes(q)
+        )
       })
   }, [allRows, search, category])
 
@@ -87,6 +92,14 @@ export default function TransactionsPage() {
 
   const handleFormSubmit = async (values: TransactionFormValues) => {
     const supabase = createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) {
+      toast.error("You must be signed in")
+      throw new Error("Not signed in")
+    }
+
     const payload = {
       date: values.date,
       description: values.description,
@@ -108,6 +121,7 @@ export default function TransactionsPage() {
         .from("transactions")
         .update(payload)
         .eq("id", editing.id)
+        .eq("user_id", user.id)
       if (error) {
         toast.error(error.message)
         throw new Error(error.message)
@@ -121,10 +135,19 @@ export default function TransactionsPage() {
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return
     const supabase = createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) {
+      toast.error("You must be signed in")
+      throw new Error("Not signed in")
+    }
+
     const { error } = await supabase
       .from("transactions")
       .delete()
       .eq("id", deleteTarget.id)
+      .eq("user_id", user.id)
 
     if (error) {
       toast.error(error.message)

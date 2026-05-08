@@ -223,7 +223,7 @@ export function TransactionFormDialog({
           </Button>
           <Button
             type="button"
-            className="bg-indigo-600 text-white hover:bg-indigo-600/90"
+            variant="brand"
             disabled={!canSave}
             onClick={handleSave}
           >

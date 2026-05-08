@@ -44,7 +44,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-            <Button asChild className="bg-indigo-600 text-white hover:bg-indigo-600/90">
+            <Button asChild variant="brand">
               <Link href="/dashboard">
                 Enter dashboard <ArrowRight className="ml-2 size-4" />
               </Link>
